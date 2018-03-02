@@ -1,0 +1,67 @@
+CREATE TABLE "account"
+(
+  acc_id SERIAL PRIMARY KEY,
+  username text,
+  name text
+);
+
+
+create or replace function getOneUserID(in id_number text, out text, out text, out text ) returns setof record as
+$$
+  		select acc_id::text, "username", "name" from account where acc_id = id_number::text
+$$
+language 'sql';
+
+--select * from getAllUserID()
+
+
+create or replace function getAllUserID(out text, out text, out text ) returns setof record as
+$$
+  		select acc_id::text, "username", "name" from account
+$$
+language 'sql';
+
+--select * from getOneUserID('1')
+
+create or replace function addUser(in par_username text, in par_name text) returns text AS
+$$
+	DECLARE
+		loc_res text;
+
+	BEGIN
+
+	insert into account(username,name) values (par_username,par_name);
+		loc_res = 'ok';
+	return loc_res;
+
+	END;
+$$
+	LANGUAGE plpgsql;
+
+create or replace function updateUser(in par_userid text,in par_newUname text) returns text AS
+$$
+	DECLARE
+		loc_res text;
+
+	BEGIN
+		update account set "name" = par_newUname where acc_id::text = par_userid;
+		loc_res = 'ok';
+	return loc_res;
+
+	END;
+$$
+	LANGUAGE plpgsql;
+
+create or replace function deleteUser(in par_userid text) returns text AS
+$$
+	DECLARE
+		loc_res text;
+
+	BEGIN
+		delete from account where acc_id::text = par_userid;
+		loc_res = 'ok';
+	return loc_res;
+
+	END;
+$$
+	LANGUAGE plpgsql;
